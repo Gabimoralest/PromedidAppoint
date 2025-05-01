@@ -8,10 +8,12 @@ class UsuarioRegistroSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
+        validated_data['rol'] = validated_data['rol'].lower()  
         user = Usuario.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password'],
-            rol=validated_data['rol']
+        username=validated_data['username'],
+        email=validated_data['email'],
+        password=validated_data['password'],
+        rol=validated_data['rol']
         )
+        
         return user

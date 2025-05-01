@@ -7,18 +7,13 @@ from usuario.api.permissions import EsAdministrador
 from rest_framework.permissions import IsAuthenticated
 
 class RegistrarUsuarioView(APIView):
-    permission_classes = [IsAuthenticated, EsAdministrador]
-    
-    def get(self, request):
-        usuarios = Usuario.objects.all()
-        serializer = UsuarioRegistroSerializer(usuarios, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request):
         serializer = UsuarioRegistroSerializer(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response({'mensaje': 'Usuario registrado correctamente'}, status=status.HTTP_201_CREATED)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
@@ -34,6 +29,7 @@ class DetalleUsuarioView(APIView):
             return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, id):
+        
         try:
             usuario = Usuario.objects.get(pk=id)
         except Usuario.DoesNotExist:
