@@ -5,17 +5,36 @@ from usuario.models import Usuario
 from usuario.api.serializers import UsuarioRegistroSerializer
 from usuario.api.permissions import EsAdministrador
 from rest_framework.permissions import IsAuthenticated
+from usuario.handlers.handlers_roles import AsesorHandler, RecepcionistaHandler, AdministradorHandler
 
 class RegistrarUsuarioView(APIView):
     
     def post(self, request):
         serializer = UsuarioRegistroSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response({'mensaje': 'Usuario registrado correctamente'}, status=status.HTTP_201_CREATED)
-        
+            data = serializer.validated_data
+            
+            asesor = AsesorHandler()
+            recepcionista = RecepcionistaHandler()
+            administrador = AdministradorHandler()
+
+            asesor.set_next(recepcionista).set_next(administrador)
+
+            try:
+                usuario = asesor.handle(data)
+                return Response({"mensaje": "Usuario creado correctamente."}, status=status.HTTP_201_CREATED)
+            except ValueError as e:
+                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+class ListaUsuariosView(APIView):
+    permission_classes = [IsAuthenticated, EsAdministrador]
+
+    def get(self, request):
+        usuarios = Usuario.objects.all()
+        serializer = UsuarioRegistroSerializer(usuarios, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
 class DetalleUsuarioView(APIView):
     permission_classes = [IsAuthenticated, EsAdministrador]

@@ -12,13 +12,13 @@ class Usuario(AbstractUser):
     
     grupos = models.ManyToManyField(
         Group,
-        related_name="usuario_grupos",  # Agregamos related_name para evitar el conflicto
+        related_name="usuario_grupos",  
         blank=True
     )
     
     usuario_permisos = models.ManyToManyField(
         Permission,
-        related_name="usuario_permisos",  # También aquí
+        related_name="usuario_permisos",  
         blank=True
     )
     

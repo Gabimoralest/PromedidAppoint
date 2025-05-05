@@ -4,16 +4,15 @@ from usuario.models import Usuario
 class UsuarioRegistroSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = ['username', 'email', 'password', 'rol']
+        fields = ['id', 'username', 'email', 'password', 'rol']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        validated_data['rol'] = validated_data['rol'].lower()  
-        user = Usuario.objects.create_user(
-        username=validated_data['username'],
-        email=validated_data['email'],
-        password=validated_data['password'],
-        rol=validated_data['rol']
-        )
-        
-        return user
+        password = validated_data.pop('password', None)
+        validated_data['rol'] = validated_data['rol'].lower()
+        instance = self.Meta.model(**validated_data)
+        if password is not None:
+            instance.set_password(password)
+        instance.save()
+        return instance
+    
