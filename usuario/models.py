@@ -23,6 +23,7 @@ class Usuario(AbstractUser):
     )
     
     rol = models.CharField(max_length=20, choices=ROLES)
+    email = models.EmailField(blank=True, null=True)
     
     def __str__(self):
         return f'Usuario: {self.username} - Rol: {self.get_rol_display()}'

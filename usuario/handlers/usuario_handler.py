@@ -9,4 +9,4 @@ class UsuarioHandler:
     def handle(self, data):
         if self._next_handler:
             return self._next_handler.handle(data)
-        raise ValueError("No se encontró ningún controlador para este rol.")
+        raise ValueError("No tienes permisos para realizar esta acción")
