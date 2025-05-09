@@ -15,6 +15,11 @@ class Persona(models.Model):
     correo = models.EmailField(unique=True)
     fecha_nacimiento = models.DateField()
     telefono = models.CharField(max_length=15)
+    estado = models.CharField(max_length=50,default='Activo')
+    
+    def desactivar(self):
+        self.estado = 'Inactivo'
+        self.save()
 
     def __str__(self):
         return f"{self.nombre} {self.apellido}"
