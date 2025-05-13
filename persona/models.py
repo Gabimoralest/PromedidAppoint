@@ -1,4 +1,5 @@
 from django.db import models
+from sedes.models import Sede
 
 class Persona(models.Model):
     
@@ -16,6 +17,7 @@ class Persona(models.Model):
     fecha_nacimiento = models.DateField()
     telefono = models.CharField(max_length=15)
     estado = models.CharField(max_length=50,default='Activo')
+    sede = models.ForeignKey(Sede, on_delete=models.PROTECT, null=True, blank=True)
     
     def desactivar(self):
         self.estado = 'Inactivo'
