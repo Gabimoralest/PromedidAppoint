@@ -1,5 +1,8 @@
 from rest_framework import serializers
+from django.core.exceptions import ValidationError as DjangoValidationError
+from rest_framework.exceptions import ValidationError as DRFValidationError
 from cita.models import Cita
+from cita.strategy.strategy import obtener_estrategia
 
 class CitaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,4 +20,17 @@ class CitaSerializer(serializers.ModelSerializer):
                         'hora': f"La hora de la cita ({hora_cita}) está fuera del horario de atención de la sede: {sede.hora_inicio_atencion} - {sede.hora_fin_atencion}."
                     })
 
+        return data
+    
+    def validate(self, data):
+        fecha = data.get('fecha')
+        hora = data.get('hora')
+        paquete = data.get('paquete', '')
+
+        estrategia = obtener_estrategia(paquete)
+        try:
+            estrategia.validar(fecha, hora)
+        except DjangoValidationError as e:
+            raise DRFValidationError({"detalle": e.message})
+        
         return data
