@@ -19,7 +19,6 @@ class Cita(models.Model):
     motivo = models.TextField()
     paquete = models.CharField(max_length=100)
     costo = models.DecimalField(max_digits=10, decimal_places=2)
-    
     paciente = models.ForeignKey(Paciente, on_delete=models.PROTECT)
     doctor = models.ForeignKey(PersonalSalud, on_delete=models.PROTECT)
     sede = models.ForeignKey(Sede, on_delete=models.PROTECT)
